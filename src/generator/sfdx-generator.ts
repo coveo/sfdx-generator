@@ -16,6 +16,7 @@ export interface IGeneratorOptions {
   outputDirectory: string;
   templateDirectory: string;
   fileExtension: string;
+  formatFileName?: (defaultFileName: string) => string;
 }
 
 export class Generator {
@@ -33,6 +34,12 @@ export class Generator {
       json = commandResult;
     }
 
+    let formatFileName = (defaultFileName: string): string => {
+      return this.options.formatFileName
+        ? this.options.formatFileName(defaultFileName)
+        : defaultFileName;
+    };
+
     const rootObject = this.parse<RootObject>(json);
     const classDefinitions: { [id: string]: IClassDefinition } = {};
     rootObject.result.forEach(result => {
@@ -47,7 +54,7 @@ export class Generator {
         classDefinitions[className] = {
           apiCommandClass: result.topic,
           className: className,
-          fileName: this.extractClassNameFromTopic(result.topic),
+          fileName: formatFileName(this.extractClassNameFromTopic(result.topic)),
           functionDefinitions: []
         };
       }
@@ -85,10 +92,11 @@ export class Generator {
     _.forEach(classDefinitions, classDefinition => {
       let classImplementation = classTemplate(this.addTemplateHelper(classDefinition));
       fs.writeFileSync(
-        path.resolve(
-          this.options.outputDirectory,
-          classDefinition.fileName + "." + this.options.fileExtension
-        ),
+        path.format({
+          dir: this.options.outputDirectory,
+          name: classDefinition.fileName,
+          ext: this.options.fileExtension
+        }),
         classImplementation
       );
     });
@@ -103,7 +111,11 @@ export class Generator {
     const sfdxClassTemplate = _.template(templateSFDXFile);
 
     fs.writeFileSync(
-      path.resolve(this.options.outputDirectory, "generatedClient." + this.options.fileExtension),
+      path.format({
+        dir: this.options.outputDirectory,
+        name: formatFileName("generatedClient"),
+        ext: this.options.fileExtension
+      }),
       sfdxClassTemplate(this.addTemplateHelper(classDefinitionsTemplateElement))
     );
   }
