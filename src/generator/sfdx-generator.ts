@@ -92,10 +92,11 @@ export class Generator {
     _.forEach(classDefinitions, classDefinition => {
       let classImplementation = classTemplate(this.addTemplateHelper(classDefinition));
       fs.writeFileSync(
-        path.resolve(
-          this.options.outputDirectory,
-          classDefinition.fileName + "." + this.options.fileExtension
-        ),
+        path.format({
+          dir: this.options.outputDirectory,
+          name: classDefinition.fileName,
+          ext: this.options.fileExtension
+        }),
         classImplementation
       );
     });
@@ -110,10 +111,11 @@ export class Generator {
     const sfdxClassTemplate = _.template(templateSFDXFile);
 
     fs.writeFileSync(
-      path.resolve(
-        this.options.outputDirectory,
-        formatFileName("generatedClient") + "." + this.options.fileExtension
-      ),
+      path.format({
+        dir: this.options.outputDirectory,
+        name: formatFileName("generatedClient"),
+        ext: this.options.fileExtension
+      }),
       sfdxClassTemplate(this.addTemplateHelper(classDefinitionsTemplateElement))
     );
   }

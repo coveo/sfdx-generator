@@ -17,7 +17,7 @@ A typescript tool that generates SFDX wrappers
       SFDXPath: 'sfdx',
       outputDirectory: path.resolve(root, 'src/generated'),
       templateDirectory: path.resolve(root, './tools/src/generator/templates'),
-      fileExtension: 'ts'
+      fileExtension: '.ts'
     })
 
     var commandFile = require('../commands.json')
