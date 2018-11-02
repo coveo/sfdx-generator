@@ -161,12 +161,12 @@ export class Generator {
   }
 
   private extractType(flag: Flag): string {
-    if (flag.type.startsWith("flag")) {
+    if (flag.type === "flag" || flag.type === "flag;") {
       // Workaround for the flag noprompt in force:package:version:promote (was 'flag;' instead of 'flag')
       return "Boolean";
     }
 
-    if (flag.type === "minutes") {
+    if (flag.type === "number" || flag.type === "minutes") {
       return "number";
     }
 
