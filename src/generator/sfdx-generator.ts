@@ -158,8 +158,13 @@ export class Generator {
   }
 
   private extractType(flag: Flag): string {
-    if (flag.type === "flag") {
+    if (flag.type.startsWith("flag")) {
+      // Workaround for the flag noprompt in force:package:version:promote (was 'flag;' instead of 'flag')
       return "Boolean";
+    }
+
+    if (flag.type === "minutes") {
+      return "number";
     }
 
     if (flag.name === "loglevel") {
