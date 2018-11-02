@@ -20,13 +20,16 @@ export interface IGeneratorOptions {
 }
 
 export class Generator {
-  templateHelpers: any = {};
+  private cliVersion: string = "";
+  private templateHelpers: any = {};
 
   constructor(private options: IGeneratorOptions) {
     this.initializeTemplateHelpers();
   }
 
   public async generate(json?: string) {
+    await this.initializeCliVersion();
+
     // If no JSON is passed, use SFDX to gather it.
     if (json === undefined) {
       const commandResult = await this.runCommand("force:doc:commands:display --json");
@@ -199,7 +202,13 @@ export class Generator {
   }
 
   private addTemplateHelper(element: Object): any {
-    return _.extend({}, element, this.templateHelpers);
+    return _.extend({ cliVersion: this.cliVersion }, element, this.templateHelpers);
+  }
+
+  private async initializeCliVersion() {
+    const unformattedCliVersion = await this.runCommand("--version");
+    // Format by removing carriage returns
+    this.cliVersion = unformattedCliVersion.replace(/\n/g, "");
   }
 
   private initializeTemplateHelpers() {

@@ -1,4 +1,4 @@
-// Generated on <%= getCurrentFormatedDate() %>. DO NOT MODIFY
+// Generated on <%= getCurrentFormatedDate() %> using <%= cliVersion %>. DO NOT MODIFY
 import { ICommandExecutioner } from "../core/commandExecutioner";<%
  _.each(classDefinitions, function(classDefinition) { %>
 import {<%= classDefinition.className %>} from "./<%= classDefinition.fileName %>";<% }) %>
