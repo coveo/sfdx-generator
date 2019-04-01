@@ -10,21 +10,24 @@ A typescript tool that generates SFDX wrappers
 
 ### Usage
  ```
-    var generator = require('sfdx-generator')
-    var path = require('path')
-    var root = path.resolve(__dirname, './..')
-    var generator = new generator.Generator({
-      SFDXPath: 'sfdx',
-      outputDirectory: path.resolve(root, 'src/generated'),
-      templateDirectory: path.resolve(root, './tools/src/generator/templates'),
-      fileExtension: '.ts'
-    })
+  const sfdxGenerator = require('../compiled/sfdx-generator.js');
+  const path = require('path');
+  const root = path.resolve(__dirname, './..');
+  
+  // Using sfdx from dev dependencies instead of global;
+  const sfdxPath = path.resolve(root, './node_modules/.bin/sfdx.cmd');
+  
+  const generator = new sfdxGenerator.Generator({
+    SFDXPath: 'sfdx',
+    outputDirectory: path.resolve(root, './generated'),
+    templateDirectory: path.resolve(root, './templatesExample'),
+    fileExtension: '.ts'
+  });
 
-    var commandFile = require('../commands.json')
-    var stringFile = JSON.stringify(commandFile)
-    generator.generate(stringFile).then(() => {
-      console.log('Generating done')
-    })
+  // Generate files using sfdx output.
+  generator.generate().then(() => {
+    console.log('Generating done');
+  });
  ```
 
 ### Documentation

@@ -32,9 +32,7 @@ export class Generator {
 
     // If no JSON is passed, use SFDX to gather it.
     if (json === undefined) {
-      const commandResult = await this.runCommand("force:doc:commands:display --json");
-
-      json = commandResult;
+      json = await this.runCommand("force:doc:commands:display --json");
     }
 
     let formatFileName = (defaultFileName: string): string => {
@@ -50,7 +48,7 @@ export class Generator {
         return;
       }
 
-      let className = this.capitalizeFirstLetter(this.extractClassNameFromTopic(result.topic));
+      const className = this.capitalizeFirstLetter(this.extractClassNameFromTopic(result.topic));
 
       // Check if existing, else creates it.
       if (!classDefinitions[className]) {
@@ -250,19 +248,21 @@ export class Generator {
     return returnValue;
   }
 
-  private runCommand(command: string, options?: ExecOptions): Promise<string> {
-    let executePromise = new Promise<string>((resolve, reject) => {
+  private cleanOutputFromUpdateMessage(errorMessage: string): string {
+    let errors = errorMessage.trim().split("\n");
+    if (errors && errors[0].includes("sfdx-cli: update available")) {
+      errors.shift();
+      return errors.join("\n").trim();
+    }
+    return errorMessage;
+  }
+
+  private runCommand(command: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
       const fullCommand = this.options.SFDXPath + " " + command;
-      exec(fullCommand, (error, stdout, stderr) => {
-        if (!_.isEmpty(stderr) || error !== null) {
-          console.log(error);
-          console.log(stderr);
-          reject(error);
-        } else {
-          resolve(stdout);
-        }
+      exec(fullCommand, { maxBuffer: 512 * 1024 }, (error, stdout) => {
+        error ? reject(error) : resolve(this.cleanOutputFromUpdateMessage(stdout));
       });
     });
-    return executePromise;
   }
 }
