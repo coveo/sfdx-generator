@@ -1,15 +1,18 @@
-const sfdxGenerator = require('../dist/sfdx-generator.cjs')
-const path = require('path')
-const root = path.resolve(__dirname, './..')
+const sfdxGenerator = require('../compiled/sfdx-generator.js');
+const path = require('path');
+const root = path.resolve(__dirname, './..');
+
+// Using sfdx from dev dependencies instead of global;
+const sfdxPath = path.resolve(root, './node_modules/.bin/sfdx.cmd');
+
 const generator = new sfdxGenerator.Generator({
-  SFDXPath: 'sfdx',
+  SFDXPath: sfdxPath,
   outputDirectory: path.resolve(root, './generated'),
   templateDirectory: path.resolve(root, './templatesExample'),
   fileExtension: '.ts'
-})
+});
 
-const commandFile = require('../commands.json')
-const stringFile = JSON.stringify(commandFile)
-generator.generate(stringFile).then(() => {
-  console.log('Generating done')
-})
+// Generate files using sfdx output.
+generator.generate().then(() => {
+  console.log('Generating done');
+});
