@@ -160,7 +160,7 @@ export class Generator {
 
   private extractType(flag: Flag): string {
     if (flag.type) {
-      if (flag.type === "flag" || flag.type === "flag;") {
+      if (flag.type === "boolean") {
         // Workaround for the flag noprompt in force:package:version:promote (was 'flag;' instead of 'flag')
         return "Boolean";
       }

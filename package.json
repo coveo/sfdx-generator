@@ -1,6 +1,6 @@
 {
   "name": "sfdx-generator",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "A node wrapper for Salesforce DX",
   "keywords": [
     "sfdx",
